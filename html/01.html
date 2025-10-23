@@ -1,0 +1,43 @@
+<html>
+  <head>
+    <title>Web3 Connection Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+  </head>
+  <body>
+    <h1>Web3 Connection Test</h1>
+    <input type="text" id="sendAccount">
+     <input type="text" id="toAccount">
+      <button id="send">send</button>
+    <p>test</p>
+        <script>        
+           // 尝试使用浏览器钱包注入的Provider，如果失败，则回退到本地节点
+        var web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+        
+        console.log("Web3 对象已初始化:", web3);
+           // 调用 eth.getBlockNumber() 来测试连接
+        web3.eth.getBlockNumber()
+            .then(res => {
+                console.log("成功连接到以太坊网络。当前区块号为:", res);
+            })
+        web3.eth.getChainId().then(res=>{
+          console.log(res)
+        })
+
+        web3.eth.getBalance("0x70997970C51812dc3A010C7d01b50e0d17dc79C8").then(res=>{
+          console.log(web3.utils.fromWei(res,"ether"))
+        })
+
+        send.onclick =function(){
+           web3. eth. sendTransaction({
+          from: sendAccount.value,
+          to: toAccount.value,
+          value: web3.utils.toWei("1","ether")
+        }).then (function (receipt) {
+          console.log("转完了")
+        });
+        }
+       
+
+        </script>
+  </body>
+</html>

@@ -35,3 +35,6 @@ main().catch((error) => {
 });
 
 npx hardhat run scripts/interact.js --network localhost
+
+
+使用本地服务器（如 npx http-server）运行，而不是直接打开 HTML 文件

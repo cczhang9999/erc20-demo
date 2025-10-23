@@ -1,0 +1,87 @@
+<html>
+  <head>
+    <title>Web3 Connection Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+  </head>
+  <body>
+    <h1>Web3 Connection Test</h1>
+    <input type="text" id="myname">
+     <input type="number" id="myage">
+      <button id="add">add</button>
+    <p>test</p>
+        <script>        
+           // 尝试使用浏览器钱包注入的Provider，如果失败，则回退到本地节点
+        var web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+
+  
+
+        const ss =  new web3.eth.Contract([
+    {
+      "inputs": [],
+      "name": "getDate",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_age",
+          "type": "uint256"
+        }
+      ],
+      "name": "setDate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],"0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199");
+  console.log(ss)
+  add.onclick= async function(){
+    console.log(myname.value,myage.value)
+    ss.methods.setDate(myname.value,myage.value)
+  }
+
+  ss.methods.getDate()
+
+  // 假设你已经连接了 Web3 提供者
+// 例如，从 MetaMask 注入的 window.ethereum
+
+if (window.ethereum) {
+  window.ethereum.request({ method: 'eth_requestAccounts' })
+    .then(accounts => {
+      if (accounts.length > 0) {
+        const localAccount = accounts[0]; // 获取第一个账户地址
+        console.log('本地 MetaMask 账户地址是:', localAccount);
+      } else {
+        console.log('没有找到已连接的账户。');
+      }
+    })
+    .catch(error => {
+      console.error('获取账户时发生错误:', error);
+    });
+} else {
+  console.log('请安装 MetaMask 钱包并连接。');
+}
+
+
+        </script>
+  </body>
+</html>

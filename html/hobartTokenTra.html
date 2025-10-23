@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>HobartToken 交互</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+</head>
+<body>
+    <h1>HobartToken 交互</h1>
+    <button id="connect">连接 MetaMask</button>
+    <p id="account"></p>
+    <input id="toAddress" placeholder="接收地址" />
+    <input id="amount" placeholder="转账数量" type="number" />
+    <button id="transfer">转账</button>
+    <p id="result"></p>
+
+    <script>
+        let web3;
+        let userAccount;
+        const contractAddress = "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"; // 替换为部署后的地址
+        const contractABI = [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "Transfer",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "decimals",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "name",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "symbol",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalSupply",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "transfer",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "success",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
+;
+
+        async function connectMetaMask() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    userAccount = accounts[0];
+                    web3 = new Web3(window.ethereum);
+                    document.getElementById('account').innerHTML = `${userAccount}`;
+                } catch (error) {
+                    console.error('连接失败:', error);
+                    alert('连接失败: ' + error.message);
+                }
+            } else {
+                alert('请安装 MetaMask！');
+            }
+        }
+
+        async function transferTokens() {
+            if (!web3 || !userAccount) {
+                alert('请先连接钱包！');
+                return;
+            }
+            const to = document.getElementById('toAddress').value;
+            const amount = document.getElementById('amount').value;
+            if (!to || !amount) {
+                alert('请输入接收地址和数量！');
+                return;
+            }
+
+            try {
+                const contract = new web3.eth.Contract(contractABI, contractAddress);
+                const amountWei = web3.utils.toWei(amount, 'ether');
+                const tx = await contract.methods.transfer(to, amountWei).send({ from: userAccount });
+                document.getElementById('result').innerHTML = `转账成功！交易哈希: ${tx.transactionHash}`;
+            } catch (error) {
+                console.error('转账失败:', error);
+                alert('转账失败: ' + error.message);
+            }
+        }
+
+        document.getElementById('connect').addEventListener('click', connectMetaMask);
+        document.getElementById('transfer').addEventListener('click', transferTokens);
+    </script>
+</body>
+</html>
